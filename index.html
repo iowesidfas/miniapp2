@@ -1,17 +1,229 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>MiniApp Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>Xeqep MiniApp</title>
+
     <style>
-        body { font-family: Arial, sans-serif; background: #1a1a1a; color: #fff; text-align: center; padding: 50px; }
-        h1 { color: gold; }
-        button { padding: 15px 30px; font-size: 18px; margin-top: 20px; cursor: pointer; }
+        :root {
+            --bg-color: #0a0a0f;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent: #7c4dff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            height: 100vh;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: #ffffff;
+        }
+
+        /* 🌈 ЖИВОЙ АНИМИРОВАННЫЙ ФОН */
+        .bg-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: blur(100px);
+            opacity: 0.8;
+        }
+
+        .blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, #3f51b5, #7c4dff);
+            border-radius: 50%;
+            animation: move 20s infinite alternate;
+        }
+
+        .blob:nth-child(2) {
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            width: 400px;
+            height: 400px;
+            right: -100px;
+            top: -100px;
+            animation-duration: 15s;
+        }
+
+        .blob:nth-child(3) {
+            background: linear-gradient(135deg, #f02fc2, #6094ea);
+            bottom: -150px;
+            left: -50px;
+            animation-duration: 25s;
+        }
+
+        @keyframes move {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(150px, 100px) scale(1.2); }
+        }
+
+        /* 💎 СТЕКЛЯННАЯ КАРТОЧКА */
+        .card {
+            width: 90%;
+            max-width: 360px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 35px;
+            padding: 45px 25px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            z-index: 10;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.5;
+            margin-bottom: 35px;
+        }
+
+        /* 🔘 КНОПКА */
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 18px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+            opacity: 0.9;
+        }
+
+        /* ✅ СТАТУС УСПЕХА */
+        .status {
+            margin-top: 25px;
+            font-size: 15px;
+            color: #4ade80;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+        }
+
+        .status.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .checkmark {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4ade80;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .checkmark svg {
+            width: 12px;
+            height: 12px;
+            stroke: #0a0a0f;
+            stroke-width: 4;
+        }
+
+        /* 👤 ФУТЕР */
+        .creator {
+            margin-top: 40px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 400;
+        }
+
+        .creator a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
-    <h1>Пример MiniApp</h1>
-    <p>Это демонстрационный миниапп для Telegram.</p>
-    <button onclick="alert('MiniApp работает!')">Нажми меня</button>
+
+    <div class="bg-wrapper">
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+    </div>
+
+    <div class="card">
+        <div class="title">Пример Mini App</div>
+        <div class="subtitle">Это демонстрационный миниапп для Telegram</div>
+
+        <button class="btn" onclick="activate()">Нажми на меня</button>
+
+        <div id="status" class="status">
+            <div class="checkmark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17L4 12"/></svg>
+            </div>
+            Миниапп работает
+        </div>
+
+        <div class="creator">
+            Создатель: <a href="https://t.me/xeqep">@xeqep</a>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+
+        function activate() {
+            // Показываем надпись
+            const status = document.getElementById('status');
+            status.classList.add('visible');
+
+            // Легкая вибрация для ощущения "качества"
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+
+            // Меняем текст кнопки для интерактива
+            const btn = document.querySelector('.btn');
+            btn.innerText = 'Готово';
+            btn.style.background = 'rgba(255,255,255,0.1)';
+            btn.style.color = '#fff';
+            btn.disabled = true;
+        }
+    </script>
 </body>
 </html>
