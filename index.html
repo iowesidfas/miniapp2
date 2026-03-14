@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Xeqep MiniApp</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <title>Xeqep MiniApp</title>
 
     <style>
         :root {
-            --bg-color: #0a0a0f;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --accent: #7c4dff;
+            --bg-color: #08080a;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-glow: rgba(124, 77, 255, 0.15);
         }
 
         * {
@@ -33,7 +33,7 @@
             color: #ffffff;
         }
 
-        /* 🌈 ЖИВОЙ АНИМИРОВАННЫЙ ФОН */
+        /* 🌈 АНИМИРОВАННЫЙ ФОН */
         .bg-wrapper {
             position: fixed;
             top: 0;
@@ -41,102 +41,130 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            filter: blur(100px);
-            opacity: 0.8;
+            filter: blur(80px);
+            opacity: 0.6;
         }
 
         .blob {
             position: absolute;
-            width: 500px;
-            height: 500px;
-            background: linear-gradient(135deg, #3f51b5, #7c4dff);
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
             border-radius: 50%;
             animation: move 20s infinite alternate;
         }
 
         .blob:nth-child(2) {
-            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
-            width: 400px;
-            height: 400px;
-            right: -100px;
-            top: -100px;
+            background: linear-gradient(135deg, #3b82f6, #2dd4bf);
+            width: 350px;
+            right: -5%;
+            top: 10%;
             animation-duration: 15s;
+            animation-delay: -2s;
         }
 
         .blob:nth-child(3) {
-            background: linear-gradient(135deg, #f02fc2, #6094ea);
-            bottom: -150px;
-            left: -50px;
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            width: 300px;
+            bottom: 5%;
+            left: 10%;
             animation-duration: 25s;
+            animation-delay: -5s;
         }
 
         @keyframes move {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(150px, 100px) scale(1.2); }
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            100% { transform: translate(100px, 50px) rotate(90deg) scale(1.3); }
         }
 
         /* 💎 СТЕКЛЯННАЯ КАРТОЧКА */
         .card {
             width: 90%;
-            max-width: 360px;
+            max-width: 380px;
             background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             border: 1px solid var(--glass-border);
-            border-radius: 35px;
-            padding: 45px 25px;
+            border-radius: 40px;
+            padding: 50px 30px;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 
+                        inset 0 1px 1px rgba(255,255,255,0.1);
             z-index: 10;
+            position: relative;
+        }
+
+        /* Декор свечения сверху */
+        .card::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 100px;
+            background: var(--accent-glow);
+            filter: blur(40px);
+            border-radius: 50%;
+            z-index: -1;
         }
 
         .title {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
             margin-bottom: 12px;
-            letter-spacing: -0.5px;
+            letter-spacing: -1px;
+            background: linear-gradient(to bottom, #fff, #999);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .subtitle {
-            font-size: 15px;
-            font-weight: 300;
+            font-size: 16px;
+            font-weight: 400;
             color: rgba(255, 255, 255, 0.5);
-            line-height: 1.5;
-            margin-bottom: 35px;
+            line-height: 1.6;
+            margin-bottom: 40px;
         }
 
         /* 🔘 КНОПКА */
         .btn {
             width: 100%;
-            padding: 16px;
+            padding: 18px;
             background: #ffffff;
             color: #000000;
             border: none;
-            border-radius: 18px;
-            font-size: 16px;
+            border-radius: 20px;
+            font-size: 17px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.05);
         }
 
         .btn:active {
-            transform: scale(0.96);
-            opacity: 0.9;
+            transform: scale(0.95);
         }
 
-        /* ✅ СТАТУС УСПЕХА */
+        .btn:disabled {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: rgba(255, 255, 255, 0.3) !important;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
+        /* ✅ СТАТУС */
         .status {
-            margin-top: 25px;
+            margin-top: 30px;
             font-size: 15px;
             color: #4ade80;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.5s ease;
+            transform: translateY(15px);
+            transition: all 0.6s ease;
         }
 
         .status.visible {
@@ -145,34 +173,39 @@
         }
 
         .checkmark {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
-            background: #4ade80;
+            background: rgba(74, 222, 128, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
+            border: 1px solid rgba(74, 222, 128, 0.4);
         }
 
         .checkmark svg {
-            width: 12px;
-            height: 12px;
-            stroke: #0a0a0f;
-            stroke-width: 4;
+            width: 14px;
+            height: 14px;
+            stroke: #4ade80;
+            stroke-width: 3;
         }
 
         /* 👤 ФУТЕР */
         .creator {
-            margin-top: 40px;
+            margin-top: 45px;
             font-size: 13px;
-            color: rgba(255, 255, 255, 0.3);
-            font-weight: 400;
+            color: rgba(255, 255, 255, 0.25);
         }
 
         .creator a {
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.4);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .creator a:hover {
+            color: #fff;
         }
     </style>
 </head>
@@ -208,20 +241,15 @@
         tg.ready();
 
         function activate() {
-            // Показываем надпись
             const status = document.getElementById('status');
             status.classList.add('visible');
 
-            // Легкая вибрация для ощущения "качества"
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.notificationOccurred('success');
             }
 
-            // Меняем текст кнопки для интерактива
             const btn = document.querySelector('.btn');
             btn.innerText = 'Готово';
-            btn.style.background = 'rgba(255,255,255,0.1)';
-            btn.style.color = '#fff';
             btn.disabled = true;
         }
     </script>
