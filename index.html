@@ -1,25 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>MiniApp Demo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Xeqep MiniApp</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <title>Xeqep MiniApp</title>
-
     <style>
-        body { font-family: Arial, sans-serif; background: #1a1a1a; color: #fff; text-align: center; padding: 50px; }
-        h1 { color: gold; }
-        button { padding: 15px 30px; font-size: 18px; margin-top: 20px; cursor: pointer; }
         :root {
-            --bg-color: #0a0a0f;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --bg-color: #03050a;
+            --glass-base: rgba(28, 23, 38, 0.34);
+            --glass-border: rgba(255, 255, 255, 0.11);
             --accent: #7c4dff;
         }
-
         * {
             margin: 0;
             padding: 0;
@@ -27,121 +20,138 @@
             font-family: 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
-
         body {
-            height: 100vh;
-            background-color: var(--bg-color);
+            min-height: 100vh;
+            background: var(--bg-color);
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
             color: #ffffff;
+            position: relative;
         }
 
-        /* 🌈 ЖИВОЙ АНИМИРОВАННЫЙ ФОН */
-        .bg-wrapper {
+        /* Один плавный градиент вместо четырёх blob'ов */
+        .gradient-bg {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            filter: blur(100px);
-            opacity: 0.8;
+            inset: 0;
+            z-index: -2;
+            background: linear-gradient(135deg, #0a0512 0%, #140d1f 100%);
+            opacity: 0.92;
         }
 
-        .blob {
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            background: linear-gradient(135deg, #3f51b5, #7c4dff);
-            border-radius: 50%;
-            animation: move 20s infinite alternate;
-        }
-
-        .blob:nth-child(2) {
-            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
-            width: 400px;
-            height: 400px;
-            right: -100px;
-            top: -100px;
-            animation-duration: 15s;
-        }
-
-        .blob:nth-child(3) {
-            background: linear-gradient(135deg, #f02fc2, #6094ea);
-            bottom: -150px;
-            left: -50px;
-            animation-duration: 25s;
-        }
-
-        @keyframes move {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(150px, 100px) scale(1.2); }
-        }
-
-        /* 💎 СТЕКЛЯННАЯ КАРТОЧКА */
-        .card {
+        .glass-card {
             width: 90%;
-            max-width: 360px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            max-width: 380px;
+            background: var(--glass-base);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
-            border-radius: 35px;
-            padding: 45px 25px;
+            border-radius: 36px;
+            padding: 48px 28px 42px;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            box-shadow: 
+                0 28px 64px -16px rgba(0,0,0,0.75),
+                inset 0 0 0 1px rgba(255,255,255,0.04);
+            position: relative;
             z-index: 10;
+            opacity: 0;
+            transform: translateY(48px);
+            animation: cardAppear 1.1s cubic-bezier(0.23,1,0.32,1) forwards;
+        }
+
+        @keyframes cardAppear {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Лёгкий блик без постоянной анимации */
+        .glass-card::after {
+            content: "";
+            position: absolute;
+            inset: -50%;
+            background: linear-gradient(
+                110deg,
+                transparent 35%,
+                rgba(255,255,255,0.08) 50%,
+                transparent 65%
+            );
+            transform: rotate(25deg);
+            pointer-events: none;
+            opacity: 0.6;
         }
 
         .title {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
+            letter-spacing: -0.9px;
             margin-bottom: 12px;
-            letter-spacing: -0.5px;
+            background: linear-gradient(90deg, #fff, #d0c3ff, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 100%;
+            animation: titleGradient 8s linear infinite;
+        }
+
+        @keyframes titleGradient {
+            0%,100% { background-position: 0% 50%; }
+            50%     { background-position: 100% 50%; }
         }
 
         .subtitle {
-            font-size: 15px;
-            font-weight: 300;
-            color: rgba(255, 255, 255, 0.5);
-            line-height: 1.5;
-            margin-bottom: 35px;
+            font-size: 15.5px;
+            font-weight: 400;
+            line-height: 1.55;
+            color: rgba(255,255,255,0.65);
+            margin-bottom: 40px;
         }
 
-        /* 🔘 КНОПКА */
         .btn {
             width: 100%;
-            padding: 16px;
-            background: #ffffff;
-            color: #000000;
-            border: none;
-            border-radius: 18px;
-            font-size: 16px;
+            padding: 17px 24px;
+            background: rgba(255,255,255,0.94);
+            border: 1px solid rgba(255,255,255,0.22);
+            border-radius: 24px;
+            font-size: 16.5px;
             font-weight: 600;
+            color: #0a0512;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 12px 28px -8px rgba(0,0,0,0.45),
+                inset 0 0 0 1px rgba(255,255,255,0.38);
+            transition: all 0.28s cubic-bezier(0.23,1,0.32,1);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 
+                0 16px 36px -10px rgba(0,0,0,0.5),
+                inset 0 0 0 1px rgba(255,255,255,0.5);
         }
 
         .btn:active {
-            transform: scale(0.96);
-            opacity: 0.9;
+            transform: scale(0.97);
         }
 
-        /* ✅ СТАТУС УСПЕХА */
+        .btn:disabled {
+            background: rgba(255,255,255,0.22);
+            color: rgba(255,255,255,0.55);
+            border-color: rgba(255,255,255,0.08);
+            box-shadow: none;
+        }
+
         .status {
-            margin-top: 25px;
-            font-size: 15px;
+            margin-top: 28px;
+            font-size: 14.8px;
             color: #4ade80;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 12px;
             opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.5s ease;
+            transform: translateY(14px);
+            transition: all 0.6s ease-out;
         }
 
         .status.visible {
@@ -150,63 +160,69 @@
         }
 
         .checkmark {
-            width: 20px;
-            height: 20px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            background: #4ade80;
+            background: rgba(74,222,128,0.14);
+            border: 1px solid rgba(74,222,128,0.32);
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .checkmark svg {
-            width: 12px;
-            height: 12px;
-            stroke: #0a0a0f;
-            stroke-width: 4;
+            width: 16px;
+            height: 16px;
+            stroke: #4ade80;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
-        /* 👤 ФУТЕР */
+        .status.visible .checkmark svg path {
+            animation: drawCheck 0.6s cubic-bezier(0.25,0.1,0.25,1) forwards;
+        }
+
+        @keyframes drawCheck {
+            to { stroke-dashoffset: 0; }
+        }
+
         .creator {
-            margin-top: 40px;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.3);
-            font-weight: 400;
+            margin-top: 44px;
+            font-size: 12.5px;
+            color: rgba(255,255,255,0.36);
         }
 
         .creator a {
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255,255,255,0.74);
             text-decoration: none;
-            font-weight: 500;
+        }
+
+        .creator a:hover {
+            color: white;
         }
     </style>
 </head>
 <body>
-    <h1>Пример MiniApp</h1>
-    <p>Это демонстрационный миниапп для Telegram.</p>
-    <button onclick="alert('MiniApp работает!')">Нажми меня</button>
+    <div class="gradient-bg"></div>
 
-    <div class="bg-wrapper">
-        <div class="blob"></div>
-        <div class="blob"></div>
-        <div class="blob"></div>
-    </div>
+    <div class="glass-card">
+        <div class="title">Xeqep MiniApp</div>
+        <div class="subtitle">Демонстрационное приложение<br>с премиальным стеклом</div>
 
-    <div class="card">
-        <div class="title">Пример Mini App</div>
-        <div class="subtitle">Это демонстрационный миниапп для Telegram</div>
-
-        <button class="btn" onclick="activate()">Нажми на меня</button>
+        <button class="btn" onclick="activate()">Активировать</button>
 
         <div id="status" class="status">
             <div class="checkmark">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6L9 17L4 12"/></svg>
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M20 6L9 17L4 12" stroke-dasharray="24" stroke-dashoffset="24"/>
+                </svg>
             </div>
-            Миниапп работает
+            <span>Приложение активно</span>
         </div>
 
         <div class="creator">
-            Создатель: <a href="https://t.me/xeqep">@xeqep</a>
+            Создатель: <a href="https://t.me/xeqep" target="_blank">@xeqep</a>
         </div>
     </div>
 
@@ -215,22 +231,48 @@
         tg.expand();
         tg.ready();
 
+        const card = document.querySelector('.glass-card');
+        let rafId = null;
+        let timeoutId = null;
+
+        // Очень лёгкий параллакс — обновление не чаще 1 раза в 40–50 мс
+        function updateParallax(e) {
+            if (timeoutId) return;
+            timeoutId = setTimeout(() => {
+                const x = (window.innerWidth  / 2 - e.clientX) / 60;
+                const y = (window.innerHeight / 2 - e.clientY) / 60;
+                card.style.transform = `perspective(1000px) rotateY(${x}deg) rotateX(${y}deg) translateZ(8px)`;
+                timeoutId = null;
+            }, 40);
+        }
+
+        document.addEventListener('mousemove', updateParallax);
+        document.addEventListener('touchmove', e => {
+            if (e.touches.length) updateParallax(e.touches[0]);
+        }, { passive: true });
+
+        document.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) translateZ(0)';
+        });
+
         function activate() {
-            // Показываем надпись
             const status = document.getElementById('status');
+            const btn = document.querySelector('.btn');
+
             status.classList.add('visible');
 
-            // Легкая вибрация для ощущения "качества"
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.notificationOccurred('success');
             }
 
-            // Меняем текст кнопки для интерактива
-            const btn = document.querySelector('.btn');
-            btn.innerText = 'Готово';
-            btn.style.background = 'rgba(255,255,255,0.1)';
-            btn.style.color = '#fff';
+            btn.textContent = 'Активировано';
             btn.disabled = true;
+
+            card.style.transition = 'transform 0.16s ease';
+            card.style.transform += ' scale(0.98)';
+            setTimeout(() => {
+                card.style.transform = card.style.transform.replace(' scale(0.98)', '');
+            }, 160);
         }
     </script>
 </body>
