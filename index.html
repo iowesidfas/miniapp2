@@ -1,447 +1,670 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xeqep MiniApp</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Xeqep • Premium Glass Realm</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Orbitron:wght@400;500;700;900&family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 
-    <style>
-        :root {
-            --bg-color: #03050a;
-            --glass-highlight: rgba(255, 255, 255, 0.1);
-            --glass-edge: rgba(255, 255, 255, 0.05);
-        }
+  <style>
+    :root {
+      --bg-deep:        #05030d;
+      --bg-mid:         #0a0617;
+      --accent-violet:  #7c4dff;
+      --accent-purple:  #a855f7;
+      --accent-cyan:    #22d3ee;
+      --accent-pink:    #ec4899;
+      --glass-1:        rgba(18, 12, 38, 0.32);
+      --glass-2:        rgba(28, 20, 52, 0.26);
+      --glass-border:   rgba(255,255,255,0.11);
+      --glow-violet:    rgba(124, 77, 255, 0.38);
+      --glow-cyan:      rgba(34, 211, 238, 0.28);
+      --text-primary:   #f1e9ff;
+      --text-secondary: rgba(225, 210, 255, 0.78);
+      --text-dim:       rgba(180, 160, 240, 0.55);
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            min-height: 100vh;
-            background-color: var(--bg-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            color: #ffffff;
-            position: relative;
-        }
+    html, body {
+      height: 100%;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      touch-action: manipulation;
+    }
 
-        /* 🎨 УЛУЧШЕННЫЙ ДИНАМИЧЕСКИЙ ФОН */
-        .gradient-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: linear-gradient(125deg, #0b0710, #130b1c, #0f0a18, #1a0f24);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-        }
+    body {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 100dvh;
+      perspective: 1600px;
+    }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            25% { background-position: 50% 100%; }
-            50% { background-position: 100% 50%; }
-            75% { background-position: 50% 0%; }
-            100% { background-position: 0% 50%; }
-        }
+    /* ────────────────────────────────────────────────
+       Многослойный фон + кинетические градиенты
+    ──────────────────────────────────────────────── */
+    .space-layers {
+      position: fixed;
+      inset: 0;
+      z-index: -10;
+      pointer-events: none;
+    }
 
-        /* 🌊 УЛУЧШЕННЫЕ БЛОБЫ */
-        .blob-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            filter: blur(70px);
-            opacity: 0.5;
-        }
+    .layer {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 60% 40%, var(--accent-violet) 0%, transparent 60%);
+      opacity: 0.08;
+      filter: blur(140px);
+      animation: drift 180s linear infinite;
+    }
 
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            mix-blend-mode: screen;
-            animation: blobMove 25s infinite alternate ease-in-out;
-        }
+    .layer:nth-child(2) { animation-delay: -45s; opacity: 0.11; background: radial-gradient(ellipse at 30% 70%, var(--accent-cyan) 0%, transparent 65%); }
+    .layer:nth-child(3) { animation-delay: -90s; opacity: 0.09; background: radial-gradient(ellipse at 80% 20%, var(--accent-pink) 0%, transparent 70%); }
+    .layer:nth-child(4) { animation-delay: -135s; opacity: 0.07; filter: blur(220px); }
 
-        .blob1 {
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle at 30% 30%, #8b5cf6, #3b82f6);
-            top: -20%;
-            left: -10%;
-            animation-duration: 30s;
-        }
+    @keyframes drift {
+      0%   { transform: translate(0, 0) rotate(0deg) scale(1.4); }
+      100% { transform: translate(-18%, 12%) rotate(360deg) scale(1.6); }
+    }
 
-        .blob2 {
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle at 70% 70%, #ec4899, #8b5cf6);
-            bottom: -20%;
-            right: -10%;
-            animation-duration: 25s;
-            animation-delay: -5s;
-        }
+    /* ────────────────────────────────────────────────
+       Очень плотные, медленно двигающиеся частицы
+    ──────────────────────────────────────────────── */
+    #particles {
+      position: fixed;
+      inset: 0;
+      z-index: -8;
+      pointer-events: none;
+    }
 
-        .blob3 {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle at 50% 50%, #6366f1, #a855f7, #2dd4bf);
-            top: 40%;
-            left: 30%;
-            animation-duration: 20s;
-            animation-delay: -2s;
-        }
+    .particle {
+      position: absolute;
+      background: linear-gradient(135deg, #ffffff22, transparent);
+      border-radius: 50%;
+      box-shadow: 0 0 18px currentColor;
+      animation: float linear infinite;
+      will-change: transform, opacity;
+    }
 
-        @keyframes blobMove {
-            0% {
-                transform: translate(0, 0) rotate(0deg) scale(1);
-            }
-            100% {
-                transform: translate(150px, 100px) rotate(120deg) scale(1.5);
-            }
-        }
+    @keyframes float {
+      0%   { transform: translateY(100vh) scale(0.4); opacity: 0; }
+      10%  { opacity: 0.7; }
+      90%  { opacity: 0.7; }
+      100% { transform: translateY(-120vh) scale(0.6); opacity: 0; }
+    }
 
-        /* 🔷 УЛУЧШЕННАЯ СТЕКЛЯННАЯ КАРТОЧКА */
-        .glass-card {
-            width: 90%;
-            max-width: 380px;
-            background: rgba(20, 15, 30, 0.25);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-right-color: rgba(255, 255, 255, 0.08);
-            border-bottom-color: rgba(255, 255, 255, 0.08);
-            border-radius: 40px;
-            padding: 50px 30px;
-            text-align: center;
-            box-shadow: 
-                0 30px 60px -20px rgba(0, 0, 0, 0.8),
-                0 0 0 1px rgba(255, 255, 255, 0.03) inset,
-                0 0 30px 0 rgba(124, 77, 255, 0.2);
-            position: relative;
-            z-index: 10;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+    /* ────────────────────────────────────────────────
+       Основная сцена со стеклом и параллаксом
+    ──────────────────────────────────────────────── */
+    .scene {
+      position: relative;
+      width: 92vw;
+      max-width: 420px;
+      transform-style: preserve-3d;
+      transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 5;
+    }
 
-        /* Эффект свечения по краям */
-        .glass-card::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: 40px;
-            padding: 2px;
-            background: linear-gradient(
-                145deg,
-                rgba(255, 255, 255, 0.3),
-                rgba(255, 255, 255, 0.05),
-                rgba(124, 77, 255, 0.2),
-                rgba(255, 255, 255, 0.05)
-            );
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-            opacity: 0.6;
-        }
+    .glass-sphere {
+      position: absolute;
+      inset: -180px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(124,77,255,0.18), transparent 60%);
+      filter: blur(90px);
+      opacity: 0.45;
+      z-index: -2;
+      pointer-events: none;
+      animation: spherePulse 14s ease-in-out infinite alternate;
+    }
 
-        /* Блики на стекле */
-        .glass-card::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -50%;
-            width: 200%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.06),
-                transparent
-            );
-            transform: rotate(25deg);
-            animation: shine 8s infinite;
-            pointer-events: none;
-            border-radius: 40px;
-        }
+    @keyframes spherePulse {
+      0%   { transform: scale(0.92) translate(20px, -30px); opacity: 0.38; }
+      100% { transform: scale(1.18) translate(-40px, 50px); opacity: 0.62; }
+    }
 
-        @keyframes shine {
-            0% { transform: translateX(-100%) rotate(25deg); }
-            20% { transform: translateX(100%) rotate(25deg); }
-            100% { transform: translateX(100%) rotate(25deg); }
-        }
+    .glass-container {
+      position: relative;
+      background: var(--glass-1);
+      backdrop-filter: blur(32px) saturate(180%);
+      -webkit-backdrop-filter: blur(32px) saturate(180%);
+      border: 1px solid var(--glass-border);
+      border-radius: 48px;
+      padding: 64px 38px 56px;
+      box-shadow: 
+        0 60px 140px -40px rgba(0,0,0,0.88),
+        inset 0 0 80px -30px rgba(255,255,255,0.08),
+        inset 0 0 0 1px rgba(255,255,255,0.06),
+        0 0 60px -20px var(--glow-violet);
+      transform-style: preserve-3d;
+      transform: translateZ(20px);
+      overflow: hidden;
+      transition: transform 0.22s cubic-bezier(0.16, 1.2, 0.3, 1.1);
+    }
 
-        /* Внутреннее свечение */
-        .card-glow {
-            position: absolute;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, rgba(124, 77, 255, 0.4), transparent 70%);
-            filter: blur(40px);
-            z-index: -1;
-            opacity: 0.7;
-            animation: glowPulse 4s ease-in-out infinite;
-        }
+    .glass-container::before,
+    .glass-container::after {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: 48px;
+      pointer-events: none;
+    }
 
-        @keyframes glowPulse {
-            0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
-            50% { opacity: 0.9; transform: translateX(-50%) scale(1.2); }
-        }
+    .glass-container::before {
+      background: linear-gradient(135deg, 
+        rgba(255,255,255,0.28) 0%, 
+        rgba(124,77,255,0.22) 40%, 
+        rgba(34,211,238,0.18) 70%, 
+        rgba(255,255,255,0.09) 100%);
+      -webkit-mask: 
+        linear-gradient(#000 0 0) content-box, 
+        linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
+      opacity: 0.7;
+    }
 
-        .title {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            letter-spacing: -1px;
-            background: linear-gradient(135deg, #fff, #c0b0ff, #fff);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: textGradient 5s ease infinite;
-            position: relative;
-            z-index: 2;
-        }
+    .glass-container::after {
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent);
+      transform: translateX(-100%) rotate(35deg);
+      animation: shineTravel 11s linear infinite;
+    }
 
-        @keyframes textGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+    @keyframes shineTravel {
+      0%   { transform: translateX(-180%) rotate(35deg); }
+      25%  { transform: translateX(280%) rotate(35deg); }
+      100% { transform: translateX(280%) rotate(35deg); }
+    }
 
-        .subtitle {
-            font-size: 16px;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.6;
-            margin-bottom: 40px;
-            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
-        }
+    /* ────────────────────────────────────────────────
+       Многослойные свечения и орбиты
+    ──────────────────────────────────────────────── */
+    .orbit-glow {
+      position: absolute;
+      top: -140px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      height: 220px;
+      background: conic-gradient(
+        from 0deg at 50% 50%,
+        transparent 0deg,
+        var(--glow-violet) 60deg,
+        var(--glow-cyan) 140deg,
+        var(--glow-violet) 220deg,
+        transparent 300deg
+      );
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.4;
+      animation: orbitRotate 28s linear infinite;
+      pointer-events: none;
+    }
 
-        /* 🔘 УЛУЧШЕННАЯ КНОПКА */
-        .btn {
-            width: 100%;
-            padding: 18px;
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 24px;
-            font-size: 17px;
-            font-weight: 600;
-            color: #0b0710;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2);
-            box-shadow: 
-                0 15px 30px -10px rgba(0, 0, 0, 0.5),
-                0 0 0 1px rgba(255, 255, 255, 0.3) inset,
-                0 0 20px 0 rgba(124, 77, 255, 0.3);
-            backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-        }
+    @keyframes orbitRotate {
+      to { transform: translateX(-50%) rotate(360deg); }
+    }
 
-        .btn::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s;
-        }
+    /* ────────────────────────────────────────────────
+       Заголовок с многослойным градиентом и искажением
+    ──────────────────────────────────────────────── */
+    .title-wrapper {
+      position: relative;
+      margin-bottom: 18px;
+      transform-style: preserve-3d;
+    }
 
-        .btn:hover::before {
-            left: 100%;
-        }
+    .title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(38px, 9vw, 64px);
+      font-weight: 900;
+      letter-spacing: -2px;
+      background: linear-gradient( 
+        92deg, 
+        #ffffff 0%, 
+        #d1c4ff 30%, 
+        #a855f7 55%, 
+        #7c4dff 75%, 
+        #ffffff 100%
+      );
+      background-size: 400% 400%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 
+        0 0 40px rgba(124,77,255,0.7),
+        0 0 80px rgba(168,85,247,0.4);
+      animation: titleFlow 18s ease infinite;
+      transform: translateZ(40px);
+    }
 
-        .btn:active {
-            transform: scale(0.96);
-            box-shadow: 
-                0 5px 15px -5px rgba(0, 0, 0, 0.5),
-                0 0 0 1px rgba(255, 255, 255, 0.5) inset,
-                0 0 30px 0 rgba(124, 77, 255, 0.5);
-        }
+    @keyframes titleFlow {
+      0%,100% { background-position: 0% 50%; }
+      50%     { background-position: 100% 50%; }
+    }
 
-        .btn:disabled {
-            background: rgba(255, 255, 255, 0.15);
-            color: rgba(255, 255, 255, 0.5);
-            border-color: rgba(255, 255, 255, 0.1);
-            box-shadow: none;
-            transform: scale(1);
-            cursor: not-allowed;
-        }
+    .title-glow {
+      position: absolute;
+      inset: -80px;
+      background: radial-gradient(circle at 50% 30%, rgba(124,77,255,0.45), transparent 70%);
+      filter: blur(90px);
+      opacity: 0.6;
+      z-index: -1;
+      animation: pulseGlow 7.2s ease-in-out infinite;
+    }
 
-        .btn:disabled::before {
-            display: none;
-        }
+    @keyframes pulseGlow {
+      0%,100% { opacity: 0.45; transform: scale(0.9); }
+      50%     { opacity: 0.85; transform: scale(1.15); }
+    }
 
-        /* ✅ УЛУЧШЕННЫЙ СТАТУС */
-        .status {
-            margin-top: 30px;
-            font-size: 15px;
-            color: #4ade80;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            opacity: 0;
-            transform: translateY(15px) scale(0.95);
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            text-shadow: 0 0 10px rgba(74, 222, 128, 0.3);
-        }
+    /* ────────────────────────────────────────────────
+       Подзаголовок с эффектом набора текста
+    ──────────────────────────────────────────────── */
+    .subtitle {
+      font-size: clamp(16px, 4vw, 19px);
+      line-height: 1.58;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 52px;
+      letter-spacing: 0.4px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: subtitleReveal 1.8s 0.6s cubic-bezier(0.23,1,0.32,1) forwards;
+    }
 
-        .status.visible {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
+    @keyframes subtitleReveal {
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        .checkmark {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: rgba(74, 222, 128, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(74, 222, 128, 0.3);
-            backdrop-filter: blur(5px);
-            box-shadow: 0 0 15px rgba(74, 222, 128, 0.2);
-        }
+    /* ────────────────────────────────────────────────
+       Кнопка с множеством эффектов
+    ──────────────────────────────────────────────── */
+    .btn {
+      position: relative;
+      width: 100%;
+      padding: 22px 32px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #0a0617;
+      background: linear-gradient(145deg, #ffffff, #f0e8ff);
+      border: 1px solid rgba(255,255,255,0.32);
+      border-radius: 32px;
+      cursor: pointer;
+      box-shadow: 
+        0 24px 48px -16px rgba(0,0,0,0.6),
+        inset 0 0 0 1.5px rgba(255,255,255,0.45),
+        0 0 40px -12px var(--accent-violet);
+      overflow: hidden;
+      transition: all 0.28s cubic-bezier(0.16, 1.2, 0.3, 1.1);
+      transform: translateZ(30px);
+    }
 
-        .checkmark svg {
-            width: 16px;
-            height: 16px;
-            stroke: #4ade80;
-            stroke-width: 3;
-            filter: drop-shadow(0 0 5px #4ade80);
-        }
+    .btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+      transform: translateX(-100%) skewX(-20deg);
+      animation: btnShine 3.8s linear infinite;
+    }
 
-        /* 👤 УЛУЧШЕННЫЙ ФУТЕР */
-        .creator {
-            margin-top: 45px;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(5px);
-            padding: 8px 16px;
-            display: inline-block;
-            border-radius: 30px;
-            background: rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
+    @keyframes btnShine {
+      0%   { transform: translateX(-180%) skewX(-20deg); }
+      30%  { transform: translateX(280%) skewX(-20deg); }
+      100% { transform: translateX(280%) skewX(-20deg); }
+    }
 
-        .creator a {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-            position: relative;
-        }
+    .btn:hover {
+      transform: translateY(-6px) translateZ(50px) scale(1.04);
+      box-shadow: 
+        0 36px 72px -20px rgba(0,0,0,0.7),
+        inset 0 0 0 2px rgba(255,255,255,0.6),
+        0 0 60px -10px var(--accent-violet);
+    }
 
-        .creator a:hover {
-            color: #fff;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
+    .btn:active {
+      transform: scale(0.96) translateZ(20px);
+      box-shadow: 0 12px 28px -12px rgba(0,0,0,0.5);
+    }
 
-        .creator a::after {
-            content: "";
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #fff, transparent);
-            transform: scaleX(0);
-            transition: transform 0.3s;
-        }
+    .btn:disabled {
+      background: rgba(255,255,255,0.14);
+      color: rgba(20,10,40,0.6);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
 
-        .creator a:hover::after {
-            transform: scaleX(1);
-        }
-    </style>
+    /* ────────────────────────────────────────────────
+       Статус с анимированной галочкой
+    ──────────────────────────────────────────────── */
+    .status {
+      margin-top: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      font-size: 17px;
+      font-weight: 500;
+      color: #4ade80;
+      opacity: 0;
+      transform: translateY(40px) scale(0.92);
+      transition: all 0.9s cubic-bezier(0.34,1.56,0.64,1.2);
+      text-shadow: 0 0 16px rgba(74,222,128,0.4);
+    }
+
+    .status.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .checkmark-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(74,222,128,0.14);
+      border: 1.5px solid rgba(74,222,128,0.32);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 24px rgba(74,222,128,0.3);
+    }
+
+    .checkmark svg {
+      width: 22px;
+      height: 22px;
+      stroke: #4ade80;
+      stroke-width: 3.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 8px #4ade80);
+    }
+
+    .checkmark path {
+      stroke-dasharray: 30;
+      stroke-dashoffset: 30;
+      animation: drawCheck 0.9s 0.3s cubic-bezier(0.25,0.1,0.25,1) forwards;
+    }
+
+    @keyframes drawCheck {
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* ────────────────────────────────────────────────
+       Футер / создатель
+    ──────────────────────────────────────────────── */
+    .creator {
+      margin-top: 64px;
+      font-size: 14px;
+      color: var(--text-dim);
+      text-align: center;
+      padding: 12px 24px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.18);
+      border: 1px solid rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      display: inline-block;
+    }
+
+    .creator a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      position: relative;
+      transition: color 0.4s ease;
+    }
+
+    .creator a:hover {
+      color: #ffffff;
+      text-shadow: 0 0 14px rgba(255,255,255,0.6);
+    }
+
+    .creator a::after {
+      content: "";
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent-violet), var(--accent-cyan), transparent);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .creator a:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    /* ────────────────────────────────────────────────
+       Дополнительные декоративные элементы
+    ──────────────────────────────────────────────── */
+    .corner-glow {
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle at 0% 0%, var(--glow-violet), transparent 70%);
+      filter: blur(80px);
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    .corner-glow.top-left    { top: -60px; left: -60px; }
+    .corner-glow.top-right   { top: -60px; right: -60px; transform: scaleX(-1); }
+    .corner-glow.bottom-left { bottom: -60px; left: -60px; transform: scaleY(-1); }
+    .corner-glow.bottom-right{ bottom: -60px; right: -60px; transform: scale(-1); }
+
+    .scanline {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(transparent 48%, rgba(124,77,255,0.04) 50%, transparent 52%);
+      background-size: 100% 180px;
+      animation: scan 18s linear infinite;
+      pointer-events: none;
+      opacity: 0.3;
+    }
+
+    @keyframes scan {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100%); }
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" /><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0"/></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>');
+      pointer-events: none;
+      opacity: 0.04;
+      z-index: 9999;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="gradient-bg"></div>
-    
-    <div class="blob-container">
-        <div class="blob blob1"></div>
-        <div class="blob blob2"></div>
-        <div class="blob blob3"></div>
-    </div>
+  <div class="space-layers">
+    <div class="layer"></div>
+    <div class="layer"></div>
+    <div class="layer"></div>
+    <div class="layer"></div>
+  </div>
 
-    <div class="glass-card">
-        <div class="card-glow"></div>
-        
-        <div class="title">Xeqep MiniApp</div>
-        <div class="subtitle">Демонстрационное приложение с премиальным стеклом</div>
+  <canvas id="particles"></canvas>
 
-        <button class="btn" onclick="activate()">Активировать</button>
+  <div class="scene" id="scene">
+    <div class="glass-sphere"></div>
 
-        <div id="status" class="status">
-            <div class="checkmark">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 6L9 17L4 12"/>
-                </svg>
-            </div>
-            <span>Приложение активно</span>
+    <div class="glass-container" id="card">
+      <div class="orbit-glow"></div>
+      <div class="title-glow"></div>
+
+      <div class="corner-glow top-left"></div>
+      <div class="corner-glow top-right"></div>
+      <div class="corner-glow bottom-left"></div>
+      <div class="corner-glow bottom-right"></div>
+
+      <div class="title-wrapper">
+        <h1 class="title">Xeqep</h1>
+      </div>
+
+      <div class="subtitle">
+        Это демонстрационный MiniApp<br>
+        от @xeqep
+      </div>
+
+      <button class="btn" id="activateBtn">Нажми на меня</button>
+
+      <div class="status" id="status">
+        <div class="checkmark-circle">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M20 6L9 17L4 12"/>
+          </svg>
         </div>
+        <span>MiniApp Работает</span>
+      </div>
 
-        <div class="creator">
-            Создатель: <a href="https://t.me/xeqep" target="_blank">@xeqep</a>
-        </div>
+      <div class="creator">
+        realm crafted by <a href="https://t.me/xeqep" target="_blank">@xeqep</a>
+      </div>
     </div>
+  </div>
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
+  <div class="scanline"></div>
+  <div class="noise"></div>
 
-        // Добавляем легкую анимацию параллакса для карточки
-        document.addEventListener('mousemove', (e) => {
-            const card = document.querySelector('.glass-card');
-            const x = (window.innerWidth / 2 - e.clientX) / 50;
-            const y = (window.innerHeight / 2 - e.clientY) / 50;
-            card.style.transform = `perspective(1000px) rotateY(${x}deg) rotateX(${y}deg) translateZ(10px)`;
-        });
+  <script>
+    // Telegram Web App
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    tg.ready();
 
-        // Возвращаем в исходное положение при уходе мыши
-        document.addEventListener('mouseleave', () => {
-            const card = document.querySelector('.glass-card');
-            card.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) translateZ(0)';
-        });
+    // ────────────────────────────────────────────────
+    //   Много частиц (canvas)
+    // ────────────────────────────────────────────────
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
 
-        function activate() {
-            const status = document.getElementById('status');
-            status.classList.add('visible');
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
-            }
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height + 50;
+        this.size = Math.random() * 2.4 + 0.6;
+        this.speed = Math.random() * 0.8 + 0.3;
+        this.opacity = Math.random() * 0.5 + 0.2;
+        this.hue = Math.random() * 60 + 260; // фиолетово-голубой диапазон
+      }
+      update() {
+        this.y -= this.speed;
+        if (this.y < -50) this.reset();
+      }
+      draw() {
+        ctx.globalAlpha = this.opacity;
+        ctx.fillStyle = `hsl(${this.hue}, 80%, 75%)`;
+        ctx.shadowColor = `hsl(${this.hue}, 100%, 70%)`;
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
 
-            const btn = document.querySelector('.btn');
-            btn.innerText = 'Активировано ✨';
-            btn.disabled = true;
-            
-            // Добавляем небольшую анимацию карточки
-            const card = document.querySelector('.glass-card');
-            card.style.transform = 'scale(0.98)';
-            setTimeout(() => {
-                card.style.transform = 'scale(1)';
-            }, 200);
-        }
-    </script>
+    for (let i = 0; i < 280; i++) {
+      particles.push(new Particle());
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // ────────────────────────────────────────────────
+    //   3D-параллакс с инерцией
+    // ────────────────────────────────────────────────
+    const scene = document.getElementById('scene');
+    const card = document.getElementById('card');
+    let currentX = 0, currentY = 0;
+    let targetX = 0, targetY = 0;
+
+    function onPointerMove(e) {
+      const x = e.clientX || e.touches?.[0]?.clientX;
+      const y = e.clientY || e.touches?.[0]?.clientY;
+
+      if (!x || !y) return;
+
+      targetX = (window.innerWidth  / 2 - x) / 28;
+      targetY = (window.innerHeight / 2 - y) / 28;
+    }
+
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('touchmove', onPointerMove, { passive: true });
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function rafLoop() {
+      currentX = lerp(currentX, targetX, 0.08);
+      currentY = lerp(currentY, targetY, 0.08);
+
+      scene.style.transform = `
+        rotateX(${currentY}deg)
+        rotateY(${currentX}deg)
+        translateZ(40px)
+      `;
+
+      requestAnimationFrame(rafLoop);
+    }
+    rafLoop();
+
+    // ────────────────────────────────────────────────
+    //   Активация
+    // ────────────────────────────────────────────────
+    const btn = document.getElementById('activateBtn');
+    const status = document.getElementById('status');
+
+    btn.addEventListener('click', () => {
+      if (btn.disabled) return;
+
+      status.classList.add('visible');
+
+      tg.HapticFeedback?.notificationOccurred('success');
+
+      btn.textContent = 'Готово';
+      btn.disabled = true;
+
+      // микро-анимация карточки
+      card.style.transition = 'transform 0.18s cubic-bezier(0.16,1,0.3,1)';
+      card.style.transform = 'scale(0.97) translateZ(10px)';
+      setTimeout(() => {
+        card.style.transform = 'scale(1) translateZ(20px)';
+      }, 180);
+    });
+  </script>
 </body>
 </html>
